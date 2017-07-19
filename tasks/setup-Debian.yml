@@ -15,19 +15,22 @@
 
 - name: Download specific Jenkins version.
   get_url:
-    url: "{{ jenkins_pkg_url }}/jenkins_{{ jenkins_version }}_all.deb"
-    dest: "/tmp/jenkins.deb"
-  when: jenkins_version is defined
+    url: "{{ jenkins_pkg_url }}/jenkins_{{ jenkins_pkg_version }}_all.deb"
+    checksum: "{{ jenkins_pkg_checksum }}"
+    dest: /var/cache/apt/archives/jenkins_{{ jenkins_pkg_version }}_all.deb
+  when: jenkins_pkg_version is defined
 
-- stat: path="/tmp/jenkins.deb"
+- name: Check that jenkins package is downloaded
+  stat:
+    path: /var/cache/apt/archives/jenkins_{{ jenkins_pkg_version }}_all.deb
   register: specific_version
 
-- name: Install correct version of Jenkins is installed.
+- name: Check that correct version of Jenkins is installed.
   apt:
-    deb="/tmp/jenkins.deb"
-    state=installed
+    deb: /var/cache/apt/archives/jenkins_{{ jenkins_pkg_version }}_all.deb
+    state: installed
   when: specific_version.stat.exists
 
 - name: Ensure Jenkins is installed.
   apt: name=jenkins state=installed
-  when: jenkins_version is undefined
+  when: jenkins_pkg_version is undefined
