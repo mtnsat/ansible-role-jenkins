@@ -18,16 +18,15 @@
     jenkins_pkg_url: "{{ __jenkins_pkg_url }}"
   when: jenkins_pkg_url is not defined
 
-- name: Setup/install tasks for RHEL
-  include: setup-RedHat.yml
+# Setup/install tasks.
+- include: setup-RedHat.yml
   when: ansible_os_family == 'RedHat'
 
-- name: Setup/install tasks for Debian
-  include: setup-Debian.yml
+- include: setup-Debian.yml
   when: ansible_os_family == 'Debian'
 
-- name: Configure Jenkins init settings.
-  include: settings.yml
+# Configure Jenkins init settings.
+- include: settings.yml
 
 # Make sure Jenkins starts, then configure Jenkins.
 - name: Ensure Jenkins is started and runs on startup.
@@ -40,12 +39,7 @@
   retries: "{{ jenkins_connection_retries }}"
   delay: "{{ jenkins_connection_delay }}"
   changed_when: false
-  # FIXME: Currently getting startup errors in vagrant
-  #   java.lang.InstantiationException: java.lang.UnsupportedClassVersionError:
-  #     org/jenkinsci/plugins/workflow/steps/scm/GenericSCMStep$DescriptorImpl :
-  #     Unsupported major.minor version 52.0
-  # WORKAROUND:
-  ignore_errors: yes
+  check_mode: no
 
 - name: Get the jenkins-cli jarfile from the Jenkins server.
   get_url:
@@ -62,5 +56,5 @@
     path: "{{ jenkins_home }}/init.groovy.d/basic-security.groovy"
     state: absent
 
-- name: Update Jenkins and install configured plugins.
-  include: plugins.yml
+# Update Jenkins and install configured plugins.
+- include: plugins.yml

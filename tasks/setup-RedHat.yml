@@ -21,16 +21,24 @@
 - name: Download specific Jenkins version.
   get_url:
     url: "{{ jenkins_pkg_url }}/jenkins-{{ jenkins_version }}-1.1.noarch.rpm"
-    dest: "/tmp/jenkins.rpm"
+    dest: "/tmp/jenkins-{{ jenkins_version }}-1.1.noarch.rpm"
   when: jenkins_version is defined
 
-- stat: path="/tmp/jenkins.rpm"
+- name: Check if we downloaded a specific version of Jenkins.
+  stat:
+    path: "/tmp/jenkins-{{ jenkins_version }}-1.1.noarch.rpm"
   register: specific_version
+  when: jenkins_version is defined
 
-- name: Install correct version of Jenkins is installed.
-  yum: name="/tmp/jenkins.rpm" state=present
-  when: specific_version.stat.exists
+- name: Install our specific version of Jenkins.
+  package:
+    name: "/tmp/jenkins-{{ jenkins_version }}-1.1.noarch.rpm"
+    state: installed
+  when: jenkins_version is defined and specific_version.stat.exists
+  notify: configure default users
 
 - name: Ensure Jenkins is installed.
-  yum: name=jenkins state=installed
-  when: jenkins_version is undefined
+  package:
+    name: jenkins
+    state: "{{ jenkins_package_state }}"
+  notify: configure default users
