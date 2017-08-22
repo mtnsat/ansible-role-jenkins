@@ -1,4 +1,18 @@
 ---
+
+- name: Upgrade Ubuntu 14.04 pip packages for plugin openssl SNI verification
+  pip:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - ndg-httpsclient
+    - pyOpenSSL
+    - pyasn1
+    - urllib3
+  when:
+    - ansible_distribution_release is defined
+    - ansible_distribution_release == 'trusty'
+
 # jenkins_plugin module doesn't support password files.
 - name: Get Jenkins admin password from file.
   slurp:
