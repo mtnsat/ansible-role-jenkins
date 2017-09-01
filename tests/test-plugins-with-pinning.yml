@@ -2,7 +2,9 @@
 - hosts: all
 
   vars:
-    jenkins_url_prefix: /jenkins
+    jenkins_version: 2.60
+    jenkins_plugins:
+      - ant
 
   pre_tasks:
     - include: java-8.yml
