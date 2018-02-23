@@ -25,6 +25,7 @@ env:
     version: 14.04
     init: /sbin/init
     run_opts: ""
+  - distro: fedora27
     site: test.yml
     prefix: ''
     http_port: 8080
