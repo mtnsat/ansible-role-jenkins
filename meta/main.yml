@@ -1,6 +1,6 @@
 ---
 dependencies:
-  - lean_delivery.java
+  - geerlingguy.java
 
 galaxy_info:
   author: geerlingguy
